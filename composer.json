@@ -1,0 +1,16 @@
+{
+    "name": "lukacscharles/epko-mini-cms",
+    "description": "Lightweight PHP Mini CMS for company websites",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lukacscharles",
+            "email": "lukacs.charles@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "vlucas/phpdotenv": "*"
+    }
+}
