@@ -52,4 +52,6 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 
 ('facebook_url', ''),
 ('instagram_url', ''),
-('linkedin_url', '');
+('linkedin_url', ''),
+
+('site_installed', 'false');;

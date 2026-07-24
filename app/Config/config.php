@@ -2,46 +2,62 @@
 
 declare(strict_types=1);
 
-use Dotenv\Dotenv;
-
 /*
 |--------------------------------------------------------------------------
-| Composer Autoload
+| Application Constants
 |--------------------------------------------------------------------------
 */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+define('APP_NAME', $_ENV['APP_NAME'] ?? 'EPKO Mini CMS');
+
+define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
+
+define(
+    'APP_DEBUG',
+    filter_var($_ENV['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN)
+);
+
+define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost');
+
 
 /*
 |--------------------------------------------------------------------------
-| Load Environment Variables
+| Upload Paths
 |--------------------------------------------------------------------------
 */
 
-$dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
-$dotenv->load();
+define('UPLOAD_PATH', dirname(__DIR__, 2) . '/public/uploads/');
+
+define('IMAGE_PATH', dirname(__DIR__, 2) . '/public/assets/images/');
+
 
 /*
 |--------------------------------------------------------------------------
-| Application Settings
+| Pagination
 |--------------------------------------------------------------------------
 */
 
-date_default_timezone_set('Europe/Budapest');
+define('ITEMS_PER_PAGE', 12);
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 /*
 |--------------------------------------------------------------------------
-| Error Reporting
+| Session Settings
 |--------------------------------------------------------------------------
 */
 
-if ($_ENV['APP_DEBUG'] === 'true') {
-    ini_set('display_errors', '1');
-    error_reporting(E_ALL);
-} else {
-    ini_set('display_errors', '0');
-}
+define('SESSION_NAME', 'epko_admin_session');
+
+
+/*
+|--------------------------------------------------------------------------
+| Timezone
+|--------------------------------------------------------------------------
+*/
+
+define('APP_TIMEZONE', 'Europe/Budapest');
+
+
+/*CMS verzió: */
+
+define('CMS_VERSION', '1.0.0');

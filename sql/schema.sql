@@ -42,11 +42,17 @@ CREATE TABLE gallery (
 
 CREATE TABLE messages (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
     name VARCHAR(100) NOT NULL,
+
     email VARCHAR(150) NOT NULL,
+
     phone VARCHAR(50),
+
     message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
+
+    status ENUM('new', 'read', 'archived') DEFAULT 'new',
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
