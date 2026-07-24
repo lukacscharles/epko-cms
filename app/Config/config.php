@@ -48,6 +48,8 @@ define('ITEMS_PER_PAGE', 12);
 
 define('SESSION_NAME', 'epko_admin_session');
 
+define('SESSION_LIFETIME', 3600);
+
 
 /*
 |--------------------------------------------------------------------------

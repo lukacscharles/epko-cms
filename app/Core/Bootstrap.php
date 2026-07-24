@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 use Dotenv\Dotenv;
 
-
 /*
 |--------------------------------------------------------------------------
-| Composer Autoload
+| Composer Autoloader
 |--------------------------------------------------------------------------
 */
 
@@ -16,11 +15,13 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
-| Environment Variables
+| Environment Variables (.env)
 |--------------------------------------------------------------------------
 */
 
-$dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
+$dotenv = Dotenv::createImmutable(
+    dirname(__DIR__, 2)
+);
 
 $dotenv->safeLoad();
 
@@ -59,13 +60,54 @@ if (APP_DEBUG) {
 } else {
 
     ini_set('display_errors', '0');
+    error_reporting(0);
 
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| Session
+| Session Security
+|--------------------------------------------------------------------------
+*/
+
+ini_set('session.cookie_httponly', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.use_strict_mode', '1');
+
+/*
+|--------------------------------------------------------------------------
+| SameSite cookie protection
+|--------------------------------------------------------------------------
+|
+| Possible values:
+| - Strict
+| - Lax
+| - None
+|
+*/
+
+ini_set(
+    'session.cookie_samesite',
+    'Strict'
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| Session Lifetime
+|--------------------------------------------------------------------------
+*/
+
+ini_set(
+    'session.gc_maxlifetime',
+    (string) SESSION_LIFETIME
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| Session Initialization
 |--------------------------------------------------------------------------
 */
 
@@ -80,13 +122,34 @@ if (session_status() === PHP_SESSION_NONE) {
 
 /*
 |--------------------------------------------------------------------------
+| Disable Browser Cache for Logged In Users
+|--------------------------------------------------------------------------
+|
+| Prevents the browser from showing previously cached
+| admin pages after logout.
+|
+*/
+
+if (isset($_SESSION['user_id'])) {
+
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
 | Future Application Boot
 |--------------------------------------------------------------------------
 |
-| Later:
+| Possible future initializers:
 |
 | Auth::boot();
 | Csrf::boot();
 | Router::boot();
+| Logger::boot();
+| Cache::boot();
 |
 */
