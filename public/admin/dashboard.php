@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-
 require_once __DIR__ . '/../../app/Core/Bootstrap.php';
-
 
 use App\Core\Auth;
 
-
 /*
 |--------------------------------------------------------------------------
-| Authentication check
+| Authentication
 |--------------------------------------------------------------------------
 */
 
@@ -20,440 +17,216 @@ Auth::requireLogin();
 
 /*
 |--------------------------------------------------------------------------
-| Current user
+| Page Title
 |--------------------------------------------------------------------------
 */
 
+$pageTitle = 'Dashboard';
+
+
+/*
+|--------------------------------------------------------------------------
+| Future Statistics
+|--------------------------------------------------------------------------
+|
+| These values will later come from the database.
+|
+*/
+
+$totalImages = 0;
+$totalCategories = 0;
+$unreadMessages = 0;
+
 $user = Auth::user();
+
+
+/*
+|--------------------------------------------------------------------------
+| Layout
+|--------------------------------------------------------------------------
+*/
+
+require_once 'partials/header.php';
+require_once 'partials/sidebar.php';
 
 ?>
 
+<div class="container-fluid py-4">
 
-<!DOCTYPE html>
-<html lang="hu">
+    <!-- Page Heading -->
 
-<head>
+    <div class="mb-4">
 
-<meta charset="UTF-8">
+        <h1 class="h3 mb-1">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+            Dashboard
 
+        </h1>
 
-<title>
-EPKO Mini CMS - Dashboard
-</title>
+        <p class="text-muted">
 
+            Üdvözöllek az EPKO Mini CMS adminisztrációs felületén!
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet">
+        </p>
 
+    </div>
 
-<style>
 
-body {
+    <!-- Statistic Cards -->
 
-    background: #f5f6fa;
+    <div class="row g-4">
 
-}
+        <div class="col-md-4">
 
+            <div class="card shadow-sm">
 
-.sidebar {
+                <div class="card-body">
 
-    min-height: 100vh;
+                    <h5>
 
-}
+                        Galéria képek
 
+                    </h5>
 
-.nav-link {
+                    <h2>
 
-    color: #fff;
+                        <?= $totalImages; ?>
 
-}
+                    </h2>
 
+                </div>
 
-.nav-link:hover {
+            </div>
 
-    background: rgba(255,255,255,.1);
+        </div>
 
-}
 
+        <div class="col-md-4">
 
-.card {
+            <div class="card shadow-sm">
 
-    border-radius: 15px;
+                <div class="card-body">
 
-}
+                    <h5>
 
+                        Kategóriák
 
-</style>
+                    </h5>
 
+                    <h2>
 
-</head>
+                        <?= $totalCategories; ?>
 
+                    </h2>
 
-<body>
+                </div>
 
+            </div>
 
-<div class="container-fluid">
+        </div>
 
 
-<div class="row">
+        <div class="col-md-4">
 
+            <div class="card shadow-sm">
 
-<!-- Sidebar -->
+                <div class="card-body">
 
-<div class="col-md-3 col-lg-2 bg-dark sidebar p-3">
+                    <h5>
 
+                        Új üzenetek
 
-<h4 class="text-white mb-4">
+                    </h5>
 
-EPKO CMS
+                    <h2>
 
-</h4>
+                        <?= $unreadMessages; ?>
 
+                    </h2>
 
+                </div>
 
-<ul class="nav flex-column">
+            </div>
 
+        </div>
 
-<li class="nav-item mb-2">
+    </div>
 
-<a href="dashboard.php"
-   class="nav-link">
 
-Dashboard
+    <!-- User Information -->
 
-</a>
+    <div class="card shadow-sm mt-4">
 
-</li>
+        <div class="card-body">
 
+            <h4>
 
+                Bejelentkezett felhasználó
 
-<li class="nav-item mb-2">
+            </h4>
 
-<a href="#"
-   class="nav-link">
+            <hr>
 
-Képgaléria
+            <p>
 
-</a>
+                <strong>Név:</strong>
 
-</li>
+                <?= htmlspecialchars(
+                    $user['name'] ?? '-',
+                    ENT_QUOTES,
+                    'UTF-8'
+                ); ?>
 
+            </p>
 
+            <p>
 
-<li class="nav-item mb-2">
+                <strong>Email:</strong>
 
-<a href="#"
-   class="nav-link">
+                <?= htmlspecialchars(
+                    $user['email'] ?? '-',
+                    ENT_QUOTES,
+                    'UTF-8'
+                ); ?>
 
-Kategóriák
+            </p>
 
-</a>
+        </div>
 
-</li>
+    </div>
 
 
+    <!-- Future Features -->
 
-<li class="nav-item mb-2">
+    <div class="card shadow-sm mt-4">
 
-<a href="#"
-   class="nav-link">
+        <div class="card-body">
 
-Üzenetek
+            <h4>
 
-</a>
+                Következő modulok
 
-</li>
+            </h4>
 
+            <hr>
 
+            <ul>
 
-<li class="nav-item mt-4">
+                <li>Drag & Drop képfeltöltés</li>
+                <li>Kategóriák kezelése</li>
+                <li>Galéria menedzsment</li>
+                <li>Kapcsolati üzenetek kezelése</li>
+                <li>Oldalbeállítások</li>
+                <li>One-page frontend szerkesztése</li>
 
+            </ul>
 
-<a href="logout.php"
-   class="btn btn-danger w-100">
+        </div>
 
-Kijelentkezés
-
-</a>
-
-
-</li>
-
-
-</ul>
-
+    </div>
 
 </div>
 
+<?php
 
-
-<!-- Main content -->
-
-<div class="col-md-9 col-lg-10 p-4">
-
-
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-
-<h1>
-
-Dashboard
-
-</h1>
-
-
-
-<div>
-
-Üdv,
-
-<strong>
-
-<?= htmlspecialchars($user['name']) ?>
-
-</strong>
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="row g-4">
-
-
-
-<div class="col-md-4">
-
-
-<div class="card shadow-sm">
-
-
-<div class="card-body">
-
-
-<h5>
-
-Képek
-
-</h5>
-
-
-<p class="text-muted">
-
-Galéria kezelése
-
-</p>
-
-
-<a href="#"
-   class="btn btn-primary">
-
-Megnyitás
-
-</a>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="col-md-4">
-
-
-<div class="card shadow-sm">
-
-
-<div class="card-body">
-
-
-<h5>
-
-Kategóriák
-
-</h5>
-
-
-<p class="text-muted">
-
-Tartalmi kategóriák kezelése
-
-</p>
-
-
-<a href="#"
-   class="btn btn-primary">
-
-Megnyitás
-
-</a>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="col-md-4">
-
-
-<div class="card shadow-sm">
-
-
-<div class="card-body">
-
-
-<h5>
-
-Üzenetek
-
-</h5>
-
-
-<p class="text-muted">
-
-Kapcsolati űrlap üzenetek
-
-</p>
-
-
-<a href="#"
-   class="btn btn-primary">
-
-Megnyitás
-
-</a>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-
-<hr class="my-5">
-
-
-
-<div class="card shadow-sm">
-
-
-<div class="card-body">
-
-
-<h4>
-
-Rendszer információ
-
-</h4>
-
-
-<table class="table">
-
-
-<tr>
-
-<td>
-
-CMS verzió
-
-</td>
-
-<td>
-
-1.0.0
-
-</td>
-
-</tr>
-
-
-
-<tr>
-
-<td>
-
-Felhasználó
-
-</td>
-
-<td>
-
-<?= htmlspecialchars($user['email']) ?>
-
-</td>
-
-</tr>
-
-
-
-<tr>
-
-<td>
-
-Jogosultság
-
-</td>
-
-<td>
-
-<?= htmlspecialchars($user['role']) ?>
-
-</td>
-
-</tr>
-
-
-</table>
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-</body>
-
-</html>
+require_once 'partials/footer.php';

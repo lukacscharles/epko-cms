@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/Core/Bootstrap.php';
 
 use App\Models\User;
+use App\Core\Csrf;
 
 $userModel = new User();
 

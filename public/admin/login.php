@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-
 require_once __DIR__ . '/../../app/Core/Bootstrap.php';
 
-
 use App\Core\Auth;
-
+use App\Core\Csrf;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +15,7 @@ use App\Core\Auth;
 
 if (Auth::check()) {
 
-    header(
-        'Location: dashboard.php'
-    );
-
+    header('Location: dashboard.php');
     exit;
 
 }
@@ -34,51 +29,70 @@ if (Auth::check()) {
 
 $error = null;
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
-    $email = trim(
-        $_POST['email'] ?? ''
-    );
-
-
-    $password = $_POST['password'] ?? '';
-
-
+    /*
+    |--------------------------------------------------------------------------
+    | CSRF Validation
+    |--------------------------------------------------------------------------
+    */
 
     if (
-        empty($email) ||
-        empty($password)
+        !Csrf::validateToken(
+            $_POST['_token'] ?? null
+        )
     ) {
 
-        $error = 'Minden mező kitöltése kötelező.';
-
+        $error = 'Érvénytelen biztonsági token.';
 
     } else {
 
-
-        $success = Auth::login(
-            $email,
-            $password
+        $email = trim(
+            $_POST['email'] ?? ''
         );
 
+        $password = $_POST['password'] ?? '';
 
-        if ($success) {
 
+        /*
+        |--------------------------------------------------------------------------
+        | Form validation
+        |--------------------------------------------------------------------------
+        */
 
-            header(
-                'Location: dashboard.php'
-            );
+        if (
+            empty($email) ||
+            empty($password)
+        ) {
 
-            exit;
-
+            $error = 'Minden mező kitöltése kötelező.';
 
         } else {
 
+            /*
+            |--------------------------------------------------------------------------
+            | Attempt login
+            |--------------------------------------------------------------------------
+            */
 
-            $error = 'Hibás email cím vagy jelszó.';
+            $success = Auth::login(
+                $email,
+                $password
+            );
 
+            if ($success) {
+
+                header(
+                    'Location: dashboard.php'
+                );
+
+                exit;
+
+            } else {
+
+                $error = 'Hibás email cím vagy jelszó.';
+
+            }
 
         }
 
@@ -87,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="hu">
@@ -99,15 +112,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-
 <title>
 EPKO Mini CMS - Bejelentkezés
 </title>
 
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet">
-
 
 <style>
 
@@ -125,7 +135,6 @@ body {
 
 }
 
-
 .login-box {
 
     width: 100%;
@@ -134,31 +143,23 @@ body {
 
 }
 
-
 .card {
 
     border-radius: 15px;
 
 }
 
-
 </style>
-
 
 </head>
 
-
 <body>
-
 
 <div class="login-box">
 
-
 <div class="card shadow">
 
-
 <div class="card-body p-5">
-
 
 <h2 class="text-center mb-4">
 
@@ -174,9 +175,7 @@ Admin belépés
 </p>
 
 
-
 <?php if ($error): ?>
-
 
 <div class="alert alert-danger">
 
@@ -184,80 +183,67 @@ Admin belépés
 
 </div>
 
-
 <?php endif; ?>
-
 
 
 <form method="POST">
 
-
-<div class="mb-3">
-
-
-<label class="form-label">
-
-Email cím
-
-</label>
+    <?= Csrf::inputField(); ?>
 
 
-<input 
-    type="email"
-    name="email"
-    class="form-control"
-    required
->
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Email cím
+
+        </label>
+
+        <input
+            type="email"
+            name="email"
+            class="form-control"
+            required
+        >
+
+    </div>
 
 
-</div>
+    <div class="mb-3">
+
+        <label class="form-label">
+
+            Jelszó
+
+        </label>
+
+        <input
+            type="password"
+            name="password"
+            class="form-control"
+            required
+        >
+
+    </div>
 
 
+    <button
+        type="submit"
+        class="btn btn-primary w-100"
+    >
 
-<div class="mb-3">
+        Belépés
 
-
-<label class="form-label">
-
-Jelszó
-
-</label>
-
-
-<input 
-    type="password"
-    name="password"
-    class="form-control"
-    required
->
-
-
-</div>
-
-
-
-<button 
-    type="submit"
-    class="btn btn-primary w-100"
->
-
-Belépés
-
-</button>
+    </button>
 
 
 </form>
 
+</div>
 
 </div>
 
-
 </div>
-
-
-</div>
-
 
 </body>
-
 </html>

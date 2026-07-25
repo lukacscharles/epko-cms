@@ -80,9 +80,10 @@ final class Csrf
 
 
     /**
-     * Regenerates the token.
+     * Regenerates the CSRF token.
      *
-     * Useful after login/logout or sensitive actions.
+     * Useful after login, logout or other
+     * sensitive operations.
      */
     public static function regenerateToken(): void
     {
@@ -93,7 +94,7 @@ final class Csrf
 
 
     /**
-     * Removes the token from the session.
+     * Removes the CSRF token from the session.
      */
     public static function destroyToken(): void
     {

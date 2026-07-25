@@ -6,13 +6,10 @@ namespace App\Core;
 
 use App\Models\User;
 
-class Auth
+final class Auth
 {
-    private static ?array $user = null;
-
-
     /**
-     * Attempt login
+     * Attempt to authenticate the user.
      */
     public static function login(
         string $email,
@@ -21,17 +18,19 @@ class Auth
 
         $userModel = new User();
 
-
-        $user = $userModel->findByEmail($email);
-
+        $user = $userModel->findByEmail(
+            $email
+        );
 
         if (!$user) {
+
             return false;
+
         }
 
 
         if (
-            !$userModel->verifyPassword(
+            !password_verify(
                 $password,
                 $user['password']
             )
@@ -53,40 +52,59 @@ class Auth
 
         /*
         |--------------------------------------------------------------------------
-        | Store user session
+        | Store user data in session
         |--------------------------------------------------------------------------
         */
 
         $_SESSION['user_id'] = $user['id'];
-
-        $_SESSION['user_email'] = $user['email'];
-
-        $_SESSION['user_role'] = $user['role'];
-
         $_SESSION['last_activity'] = time();
 
 
-        self::$user = $user;
+        /*
+        |--------------------------------------------------------------------------
+        | Regenerate CSRF token
+        |--------------------------------------------------------------------------
+        */
+
+        Csrf::regenerateToken();
 
 
         return true;
     }
 
 
-
     /**
-     * Logout user
+     * Destroy the current session.
      */
     public static function logout(): void
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Destroy CSRF token
+        |--------------------------------------------------------------------------
+        */
+
+        Csrf::destroyToken();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear session data
+        |--------------------------------------------------------------------------
+        */
 
         $_SESSION = [];
 
 
-        if (ini_get("session.use_cookies")) {
+        /*
+        |--------------------------------------------------------------------------
+        | Remove session cookie
+        |--------------------------------------------------------------------------
+        */
+
+        if (ini_get('session.use_cookies')) {
 
             $params = session_get_cookie_params();
-
 
             setcookie(
                 session_name(),
@@ -101,63 +119,68 @@ class Auth
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Destroy session
+        |--------------------------------------------------------------------------
+        */
+
         session_destroy();
-
-
-        self::$user = null;
     }
 
 
-
     /**
-     * Check if user is authenticated
+     * Check if the user is authenticated.
      */
     public static function check(): bool
     {
-        return isset($_SESSION['user_id']);
-    }
+        if (
+            !isset($_SESSION['user_id'])
+        ) {
 
-
-
-    /**
-     * Get current logged-in user
-     */
-    public static function user(): ?array
-    {
-
-        if (!self::check()) {
-
-            return null;
+            return false;
 
         }
 
 
-        if (self::$user !== null) {
+        /*
+        |--------------------------------------------------------------------------
+        | Session timeout
+        |--------------------------------------------------------------------------
+        */
 
-            return self::$user;
+        if (
+            isset($_SESSION['last_activity'])
+            &&
+            (
+                time() - $_SESSION['last_activity']
+            ) > SESSION_LIFETIME
+        ) {
+
+            self::logout();
+
+            return false;
 
         }
 
 
-        $userModel = new User();
+        /*
+        |--------------------------------------------------------------------------
+        | Update last activity timestamp
+        |--------------------------------------------------------------------------
+        */
 
+        $_SESSION['last_activity'] = time();
 
-        self::$user = $userModel->findById(
-            (int)$_SESSION['user_id']
-        );
-
-
-        return self::$user;
+        return true;
     }
 
 
-
     /**
-     * Require authentication
+     * Redirect guests to the login page.
      */
     public static function requireLogin(): void
     {
-
         if (!self::check()) {
 
             header(
@@ -165,23 +188,40 @@ class Auth
             );
 
             exit;
-
         }
-
     }
 
 
+    /**
+     * Return the currently authenticated user.
+     */
+    public static function user(): ?array
+    {
+        if (!self::check()) {
+
+            return null;
+
+        }
+
+        $userModel = new User();
+
+        return $userModel->findById(
+            (int) $_SESSION['user_id']
+        );
+    }
+
 
     /**
-     * Check user role
+     * Return the current user's ID.
      */
-    public static function hasRole(
-        string $role
-    ): bool {
+    public static function id(): ?int
+    {
+        if (!self::check()) {
 
-        return isset($_SESSION['user_role'])
-            &&
-            $_SESSION['user_role'] === $role;
+            return null;
 
+        }
+
+        return (int) $_SESSION['user_id'];
     }
 }

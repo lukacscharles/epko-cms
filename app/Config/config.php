@@ -62,4 +62,6 @@ define('APP_TIMEZONE', 'Europe/Budapest');
 
 /*CMS verzió: */
 
+define('CMS_NAME', 'EPKO Mini CMS');
 define('CMS_VERSION', '1.0.0');
+define('CMS_DEVELOPER', 'Lukács Károly');
