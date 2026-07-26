@@ -58,22 +58,34 @@ CREATE TABLE gallery_images (
 
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
+
     category_id INT UNSIGNED NOT NULL,
 
-    filename VARCHAR(255) NOT NULL,
 
-    thumbnail VARCHAR(255),
+    title VARCHAR(255) NOT NULL,
+
+
+    description TEXT NOT NULL,
+
+
+    alt_text VARCHAR(255) DEFAULT NULL,
+
+
+    image VARCHAR(255) NOT NULL,
+
 
     sort_order INT DEFAULT 0,
 
-    is_featured BOOLEAN DEFAULT FALSE,
 
     is_active BOOLEAN DEFAULT TRUE,
 
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ON UPDATE CURRENT_TIMESTAMP,
+
 
     FOREIGN KEY (category_id)
     REFERENCES categories(id)

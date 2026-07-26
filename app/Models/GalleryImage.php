@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use PDO;
 use App\Core\Database;
+use PDO;
+
 
 class GalleryImage
 {
+
     private PDO $db;
+
 
 
     public function __construct()
     {
-        $this->db = Database::connection();
-        
+
+        $this->db = Database::getInstance()
+            ->getConnection();
+
     }
+
 
 
     /*
@@ -27,14 +33,45 @@ class GalleryImage
 
     public function getAll(): array
     {
+
         $stmt = $this->db->query(
             "SELECT *
-            FROM gallery_images
-            ORDER BY sort_order ASC, id DESC"
+             FROM gallery_images
+             ORDER BY sort_order ASC, id DESC"
         );
 
+
         return $stmt->fetchAll();
+
     }
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Get active images
+    |--------------------------------------------------------------------------
+    */
+
+    public function getActive(): array
+    {
+
+        $stmt = $this->db->query(
+            "SELECT *
+             FROM gallery_images
+             WHERE is_active = 1
+             ORDER BY sort_order ASC, id DESC"
+        );
+
+
+        return $stmt->fetchAll();
+
+    }
+
+
+
 
 
     /*
@@ -45,19 +82,26 @@ class GalleryImage
 
     public function getById(int $id): array|false
     {
+
         $stmt = $this->db->prepare(
             "SELECT *
-            FROM gallery_images
-            WHERE id = :id
-            LIMIT 1"
+             FROM gallery_images
+             WHERE id = :id
+             LIMIT 1"
         );
+
 
         $stmt->execute([
             'id' => $id
         ]);
 
+
         return $stmt->fetch();
+
     }
+
+
+
 
 
     /*
@@ -66,21 +110,29 @@ class GalleryImage
     |--------------------------------------------------------------------------
     */
 
-    public function getByCategory(int $categoryId): array
-    {
+    public function getByCategory(
+        int $categoryId
+    ): array {
+
         $stmt = $this->db->prepare(
             "SELECT *
-            FROM gallery_images
-            WHERE category_id = :category_id
-            ORDER BY sort_order ASC"
+             FROM gallery_images
+             WHERE category_id = :category_id
+             ORDER BY sort_order ASC, id DESC"
         );
+
 
         $stmt->execute([
             'category_id' => $categoryId
         ]);
 
+
         return $stmt->fetchAll();
+
     }
+
+
+
 
 
     /*
@@ -91,28 +143,18 @@ class GalleryImage
 
     public function count(): int
     {
-        return (int) $this->db
-            ->query("SELECT COUNT(*) FROM gallery_images")
-            ->fetchColumn();
-    }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Count featured images
-    |--------------------------------------------------------------------------
-    */
-
-    public function countFeatured(): int
-    {
-        return (int) $this->db
+        return (int)$this->db
             ->query(
                 "SELECT COUNT(*)
-                FROM gallery_images
-                WHERE is_featured = 1"
+                 FROM gallery_images"
             )
             ->fetchColumn();
+
     }
+
+
+
 
 
     /*
@@ -122,32 +164,55 @@ class GalleryImage
     */
 
     public function create(
-        int $categoryId,
-        string $filename,
-        ?string $thumbnail = null
+        array $data
     ): bool {
 
         $stmt = $this->db->prepare(
             "INSERT INTO gallery_images
             (
                 category_id,
-                filename,
-                thumbnail
+                title,
+                description,
+                alt_text,
+                image,
+                sort_order,
+                is_active
             )
             VALUES
             (
                 :category_id,
-                :filename,
-                :thumbnail
+                :title,
+                :description,
+                :alt_text,
+                :image,
+                :sort_order,
+                :is_active
             )"
         );
 
+
         return $stmt->execute([
-            'category_id' => $categoryId,
-            'filename' => $filename,
-            'thumbnail' => $thumbnail
+
+            'category_id' => $data['category_id'],
+
+            'title' => $data['title'],
+
+            'description' => $data['description'],
+
+            'alt_text' => $data['alt_text'] ?? null,
+
+            'image' => $data['image'],
+
+            'sort_order' => $data['sort_order'] ?? 0,
+
+            'is_active' => $data['is_active'] ?? 1
+
         ]);
+
     }
+
+
+
 
 
     /*
@@ -158,36 +223,64 @@ class GalleryImage
 
     public function update(
         int $id,
-        int $categoryId,
-        string $filename,
-        ?string $thumbnail,
-        int $sortOrder,
-        bool $isFeatured,
-        bool $isActive
+        array $data
     ): bool {
+
 
         $stmt = $this->db->prepare(
             "UPDATE gallery_images
-            SET
+             SET
+
                 category_id = :category_id,
-                filename = :filename,
-                thumbnail = :thumbnail,
+
+                title = :title,
+
+                description = :description,
+
+                alt_text = :alt_text,
+
+                image = :image,
+
                 sort_order = :sort_order,
-                is_featured = :is_featured,
+
                 is_active = :is_active
-            WHERE id = :id"
+
+             WHERE id = :id"
         );
 
+
         return $stmt->execute([
+
+
             'id' => $id,
-            'category_id' => $categoryId,
-            'filename' => $filename,
-            'thumbnail' => $thumbnail,
-            'sort_order' => $sortOrder,
-            'is_featured' => (int)$isFeatured,
-            'is_active' => (int)$isActive
+
+
+            'category_id' => $data['category_id'],
+
+
+            'title' => $data['title'],
+
+
+            'description' => $data['description'],
+
+
+            'alt_text' => $data['alt_text'] ?? null,
+
+
+            'image' => $data['image'],
+
+
+            'sort_order' => $data['sort_order'] ?? 0,
+
+
+            'is_active' => $data['is_active'] ?? 1
+
         ]);
+
     }
+
+
+
 
 
     /*
@@ -196,46 +289,31 @@ class GalleryImage
     |--------------------------------------------------------------------------
     */
 
-    public function delete(int $id): bool
-    {
-        $stmt = $this->db->prepare(
-            "DELETE FROM gallery_images
-            WHERE id = :id"
-        );
-
-        return $stmt->execute([
-            'id' => $id
-        ]);
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Set featured image
-    |--------------------------------------------------------------------------
-    */
-
-    public function setFeatured(
-        int $id,
-        bool $featured
+    public function delete(
+        int $id
     ): bool {
 
         $stmt = $this->db->prepare(
-            "UPDATE gallery_images
-            SET is_featured = :featured
-            WHERE id = :id"
+            "DELETE FROM gallery_images
+             WHERE id = :id"
         );
 
+
         return $stmt->execute([
-            'id' => $id,
-            'featured' => (int)$featured
+
+            'id' => $id
+
         ]);
+
     }
+
+
+
 
 
     /*
     |--------------------------------------------------------------------------
-    | Set active / inactive
+    | Activate / deactivate image
     |--------------------------------------------------------------------------
     */
 
@@ -246,20 +324,28 @@ class GalleryImage
 
         $stmt = $this->db->prepare(
             "UPDATE gallery_images
-            SET is_active = :active
-            WHERE id = :id"
+             SET is_active = :active
+             WHERE id = :id"
         );
 
+
         return $stmt->execute([
+
             'id' => $id,
+
             'active' => (int)$active
+
         ]);
+
     }
+
+
+
 
 
     /*
     |--------------------------------------------------------------------------
-    | Get translations
+    | Translation list
     |--------------------------------------------------------------------------
     */
 
@@ -269,17 +355,25 @@ class GalleryImage
 
         $stmt = $this->db->prepare(
             "SELECT *
-            FROM gallery_translations
-            WHERE gallery_id = :gallery_id
-            ORDER BY language_code ASC"
+             FROM gallery_translations
+             WHERE gallery_id = :gallery_id
+             ORDER BY language_code ASC"
         );
 
+
         $stmt->execute([
+
             'gallery_id' => $galleryId
+
         ]);
 
+
         return $stmt->fetchAll();
+
     }
+
+
+
 
 
     /*
@@ -292,11 +386,10 @@ class GalleryImage
         int $galleryId,
         string $languageCode,
         string $title,
-        ?string $description = null,
-        ?string $altText = null,
-        ?string $seoTitle = null,
-        ?string $seoDescription = null
+        string $description,
+        ?string $altText = null
     ): bool {
+
 
         $stmt = $this->db->prepare(
             "REPLACE INTO gallery_translations
@@ -305,9 +398,7 @@ class GalleryImage
                 language_code,
                 title,
                 description,
-                alt_text,
-                seo_title,
-                seo_description
+                alt_text
             )
             VALUES
             (
@@ -315,22 +406,29 @@ class GalleryImage
                 :language_code,
                 :title,
                 :description,
-                :alt_text,
-                :seo_title,
-                :seo_description
+                :alt_text
             )"
         );
 
+
         return $stmt->execute([
+
             'gallery_id' => $galleryId,
+
             'language_code' => $languageCode,
+
             'title' => $title,
+
             'description' => $description,
-            'alt_text' => $altText,
-            'seo_title' => $seoTitle,
-            'seo_description' => $seoDescription
+
+            'alt_text' => $altText
+
         ]);
+
     }
+
+
+
 
 
     /*
@@ -344,16 +442,23 @@ class GalleryImage
         string $languageCode
     ): bool {
 
+
         $stmt = $this->db->prepare(
             "DELETE FROM gallery_translations
-            WHERE gallery_id = :gallery_id
-            AND language_code = :language_code"
+             WHERE gallery_id = :gallery_id
+             AND language_code = :language_code"
         );
 
+
         return $stmt->execute([
+
             'gallery_id' => $galleryId,
+
             'language_code' => $languageCode
+
         ]);
+
     }
+
 
 }
