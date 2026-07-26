@@ -32,6 +32,28 @@ CREATE TABLE categories (
     ON UPDATE CURRENT_TIMESTAMP
 
 );
+
+CREATE TABLE category_translations (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    category_id INT UNSIGNED NOT NULL,
+
+    language_code VARCHAR(5) NOT NULL,
+
+    translated_name VARCHAR(100) NOT NULL,
+
+    UNIQUE KEY unique_translation (
+        category_id,
+        language_code
+    ),
+
+    FOREIGN KEY (category_id)
+    REFERENCES categories(id)
+    ON DELETE CASCADE
+
+);
+
 CREATE TABLE gallery_images (
 
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -55,6 +77,25 @@ CREATE TABLE gallery_images (
 
     FOREIGN KEY (category_id)
     REFERENCES categories(id)
+    ON DELETE CASCADE
+
+);
+CREATE TABLE gallery_translations (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    gallery_id INT UNSIGNED NOT NULL,
+
+    language_code VARCHAR(5) NOT NULL,
+
+    title VARCHAR(255) NOT NULL,
+
+    description TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (gallery_id)
+    REFERENCES gallery_images(id)
     ON DELETE CASCADE
 
 );
