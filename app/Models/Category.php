@@ -13,7 +13,7 @@ class Category
 
     public function __construct()
     {
-        $this->db = Database::getConnection();
+        $this->db = Database::connection();
     }
 
 

@@ -51,8 +51,8 @@ final class Database
     }
 
     /**
-     * Returns the Database singleton instance.
-     */
+    * Returns the Database singleton instance.
+    */
     public static function getInstance(): Database
     {
         if (self::$instance === null) {
@@ -61,6 +61,16 @@ final class Database
 
         return self::$instance;
     }
+
+
+    /**
+     * Returns the PDO connection statically.
+     */
+    public static function connection(): PDO
+    {
+        return self::getInstance()->getConnection();
+    }
+
 
     /**
      * Returns the PDO connection.

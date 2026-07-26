@@ -80,6 +80,7 @@ CREATE TABLE gallery_images (
     ON DELETE CASCADE
 
 );
+
 CREATE TABLE gallery_translations (
 
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -92,7 +93,16 @@ CREATE TABLE gallery_translations (
 
     description TEXT,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    alt_text VARCHAR(255),
+
+    seo_title VARCHAR(255),
+
+    seo_description TEXT,
+
+    UNIQUE KEY unique_translation (
+        gallery_id,
+        language_code
+    ),
 
     FOREIGN KEY (gallery_id)
     REFERENCES gallery_images(id)
