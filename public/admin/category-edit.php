@@ -17,7 +17,7 @@ Auth::requireLogin();
 
 
 
-$pageTitle = 'Új kategória';
+$pageTitle = 'Kategória szerkesztése';
 
 
 
@@ -27,6 +27,51 @@ $categoryModel = new Category();
 
 $errors = [];
 
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Category ID
+|--------------------------------------------------------------------------
+*/
+
+
+$id = (int)(
+    $_GET['id'] ?? 0
+);
+
+
+
+if ($id <= 0) {
+
+    die('Érvénytelen kategória azonosító.');
+
+}
+
+
+
+$category = $categoryModel->find($id);
+
+
+
+if (!$category) {
+
+    die('A kategória nem található.');
+
+}
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Form submit
+|--------------------------------------------------------------------------
+*/
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,6 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
+
     $name = trim(
         $_POST['name'] ?? ''
     );
@@ -56,6 +103,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+    $isActive = isset(
+        $_POST['is_active']
+    ) ? 1 : 0;
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validation
+    |--------------------------------------------------------------------------
+    */
 
 
     if ($name === '') {
@@ -70,12 +131,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (mb_strlen($name) > 100) {
 
         $errors[] =
-            'A név maximum 100 karakter lehet.';
+            'A kategória neve maximum 100 karakter lehet.';
 
     }
 
 
 
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update
+    |--------------------------------------------------------------------------
+    */
 
 
     if (empty($errors)) {
@@ -84,10 +153,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
 
 
-            $categoryModel->create(
+            $categoryModel->update(
+                $id,
                 $name,
-                null,
-                $sortOrder
+                $sortOrder,
+                $isActive
             );
 
 
@@ -97,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             header(
-                'Location: categories.php?success=created'
+                'Location: categories.php?success=updated'
             );
 
             exit;
@@ -117,7 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             $errors[] =
-                'A kategória mentése sikertelen.';
+                'A kategória módosítása sikertelen.';
+
 
         }
 
@@ -129,6 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
+
+
 require_once 'partials/header.php';
 
 require_once 'partials/sidebar.php';
@@ -136,7 +210,9 @@ require_once 'partials/sidebar.php';
 ?>
 
 
+
 <div class="container-fluid py-4">
+
 
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -145,28 +221,44 @@ require_once 'partials/sidebar.php';
 <div>
 
 <h1>
-Új kategória
+
+Kategória szerkesztése
+
 </h1>
 
+
 <p class="text-muted">
-Új galéria kategória létrehozása.
+
+<?= htmlspecialchars(
+    $category['name'],
+    ENT_QUOTES,
+    'UTF-8'
+) ?>
+
 </p>
 
+
 </div>
+
 
 
 
 <a href="categories.php"
    class="btn btn-secondary">
 
+
 <i class="bi bi-arrow-left"></i>
 
 Vissza
 
+
 </a>
 
 
+
 </div>
+
+
 
 
 
@@ -177,26 +269,37 @@ Vissza
 
 <div class="alert alert-danger">
 
+
 <ul class="mb-0">
+
 
 <?php foreach ($errors as $error): ?>
 
+
 <li>
+
 <?= htmlspecialchars(
     $error,
     ENT_QUOTES,
     'UTF-8'
 ) ?>
+
+
 </li>
+
 
 <?php endforeach; ?>
 
+
 </ul>
+
 
 </div>
 
 
 <?php endif; ?>
+
+
 
 
 
@@ -208,10 +311,13 @@ Vissza
 <div class="card-body">
 
 
+
 <form method="POST">
 
 
+
 <?= Csrf::inputField() ?>
+
 
 
 
@@ -227,6 +333,7 @@ Kategória neve
 </label>
 
 
+
 <input
 type="text"
 name="name"
@@ -234,14 +341,18 @@ class="form-control"
 maxlength="100"
 required
 value="<?= htmlspecialchars(
-    $_POST['name'] ?? '',
+    $_POST['name']
+    ?? $category['name'],
     ENT_QUOTES,
     'UTF-8'
 ) ?>"
 >
 
 
+
 </div>
+
+
 
 
 
@@ -252,31 +363,103 @@ value="<?= htmlspecialchars(
 
 <label class="form-label">
 
-Sorrend
+Slug
 
 </label>
 
 
+
 <input
-type="number"
-name="sort_order"
+type="text"
 class="form-control"
+readonly
 value="<?= htmlspecialchars(
-    $_POST['sort_order'] ?? '0',
+    $category['slug'],
     ENT_QUOTES,
     'UTF-8'
 ) ?>"
 >
 
 
+
 <div class="form-text">
 
-Kisebb szám jelenik meg előrébb.
+A slug automatikusan generált,
+SEO azonosító.
 
 </div>
 
 
 </div>
+
+
+
+
+
+
+
+
+<input
+    type="number"
+    name="sort_order"
+    class="form-control"
+    value="<?= htmlspecialchars(
+        (string)(
+            $_POST['sort_order']
+            ??
+            $category['sort_order']
+            ??
+            0
+        ),
+        ENT_QUOTES,
+        'UTF-8'
+    ) ?>"
+>
+
+
+
+
+
+
+
+<div class="form-check mb-4">
+
+
+<input
+type="checkbox"
+name="is_active"
+id="is_active"
+class="form-check-input"
+
+<?= (
+    isset($_POST['is_active'])
+    ||
+    (!isset($_POST['is_active'])
+    && $category['is_active'])
+)
+?
+'checked'
+:
+''
+?>
+
+>
+
+
+<label
+for="is_active"
+class="form-check-label">
+
+
+Aktív kategória
+
+
+</label>
+
+
+</div>
+
+
 
 
 
@@ -287,12 +470,13 @@ type="submit"
 class="btn btn-primary">
 
 
-<i class="bi bi-check-circle"></i>
+<i class="bi bi-save"></i>
 
 Mentés
 
 
 </button>
+
 
 
 
@@ -307,6 +491,8 @@ Mégse
 
 
 
+
+
 </form>
 
 
@@ -317,6 +503,7 @@ Mégse
 
 
 </div>
+
 
 
 
