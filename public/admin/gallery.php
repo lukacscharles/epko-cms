@@ -49,7 +49,20 @@ $images = $galleryModel->getAll();
 $categories = $categoryModel->getAll();
 
 
+/*
+|--------------------------------------------------------------------------
+| Category lookup
+|--------------------------------------------------------------------------
+*/
+/*
+$categoryNames = [];
 
+foreach ($categories as $category) {
+
+    $categoryNames[$category['id']] = $category['name'];
+
+}
+*/
 require_once 'partials/header.php';
 
 require_once 'partials/sidebar.php';
@@ -277,9 +290,13 @@ alt="<?= htmlspecialchars(
 
 <p class="mb-2">
 
-<strong>Kategória ID:</strong>
+<strong>Kategória:</strong>
 
-<?= $image['category_id'] ?>
+<?= htmlspecialchars(
+    $image['category_name'] ?? 'Nincs kategória',
+    ENT_QUOTES,
+    'UTF-8'
+) ?>
 
 </p>
 
@@ -378,8 +395,7 @@ class="btn btn-outline-secondary btn-sm">
 
 
 <a href="gallery-delete.php?id=<?= $image['id'] ?>"
-class="btn btn-outline-danger btn-sm"
-onclick="return confirmDelete();">
+class="btn btn-outline-danger btn-sm">
 
 <i class="bi bi-trash"></i>
 

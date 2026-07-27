@@ -5,43 +5,57 @@ declare(strict_types=1);
 
 /*
 |--------------------------------------------------------------------------
-| Bootstrap
+| Frontend One Page
+|--------------------------------------------------------------------------
+|
+| This file only assembles the page.
+| Logic stays in controllers/models.
+|
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| Header
 |--------------------------------------------------------------------------
 */
 
-require_once dirname(__DIR__)
-    . '/app/Core/Bootstrap.php';
+require_once __DIR__ . '/partials/header.php';
+
+
+/*
+|--------------------------------------------------------------------------
+| Navigation
+|--------------------------------------------------------------------------
+*/
+
+require_once __DIR__ . '/partials/navbar.php';
 
 
 
 /*
 |--------------------------------------------------------------------------
-| Models
+| Page Sections
 |--------------------------------------------------------------------------
 */
 
-use App\Models\GalleryImage;
+require_once __DIR__ . '/sections/hero.php';
+
+
+require_once __DIR__ . '/sections/about.php';
+
+
+require_once __DIR__ . '/sections/references.php';
+
+
+require_once __DIR__ . '/sections/contact.php';
 
 
 
 /*
 |--------------------------------------------------------------------------
-| Gallery data
+| Footer
 |--------------------------------------------------------------------------
 */
 
-$galleryModel = new GalleryImage();
-
-
-$galleryImages = $galleryModel->getAll();
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Frontend view
-|--------------------------------------------------------------------------
-*/
-
-require_once dirname(__DIR__)
-    . '/resources/views/frontend/index.php';
+require_once __DIR__ . '/partials/footer.php';

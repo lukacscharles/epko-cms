@@ -31,19 +31,29 @@ class GalleryImage
     |--------------------------------------------------------------------------
     */
 
-    public function getAll(): array
-    {
+public function getAll(): array
+{
 
-        $stmt = $this->db->query(
-            "SELECT *
-             FROM gallery_images
-             ORDER BY sort_order ASC, id DESC"
-        );
+    $stmt = $this->db->query(
+        "SELECT 
+            gallery_images.*,
+            categories.name AS category_name,
+            categories.slug AS category_slug
+
+        FROM gallery_images
+
+        LEFT JOIN categories
+            ON gallery_images.category_id = categories.id
+
+        ORDER BY
+            gallery_images.sort_order ASC,
+            gallery_images.id DESC"
+    );
 
 
-        return $stmt->fetchAll();
+    return $stmt->fetchAll();
 
-    }
+}
 
 
 
@@ -80,25 +90,36 @@ class GalleryImage
     |--------------------------------------------------------------------------
     */
 
-    public function getById(int $id): array|false
-    {
+public function getById(int $id): array|false
+{
 
-        $stmt = $this->db->prepare(
-            "SELECT *
-             FROM gallery_images
-             WHERE id = :id
-             LIMIT 1"
-        );
+    $stmt = $this->db->prepare(
+        "SELECT
+
+            gallery_images.*,
+
+            categories.name AS category_name,
+            categories.slug AS category_slug
+
+        FROM gallery_images
+
+        LEFT JOIN categories
+            ON gallery_images.category_id = categories.id
+
+        WHERE gallery_images.id = :id
+
+        LIMIT 1"
+    );
 
 
-        $stmt->execute([
-            'id' => $id
-        ]);
+    $stmt->execute([
+        'id' => $id
+    ]);
 
 
-        return $stmt->fetch();
+    return $stmt->fetch();
 
-    }
+}
 
 
 
