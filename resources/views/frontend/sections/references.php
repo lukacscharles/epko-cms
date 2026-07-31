@@ -61,13 +61,13 @@ declare(strict_types=1);
                         <!-- IMAGE -->
 
 
-                        <a href="/epko-mini-cms/public/uploads/gallery/<?= htmlspecialchars(
+                        <a href="<?= APP_URL ?>/uploads/gallery/<?= htmlspecialchars(
                                     $image['image'],
                                     ENT_QUOTES,
                                     'UTF-8'
                                 ) ?>"  target="_blank">
                                  <img
-                                src="/epko-mini-cms/public/uploads/gallery/<?= htmlspecialchars(
+                                src="<?= APP_URL ?>/uploads/gallery/<?= htmlspecialchars(
                                     $image['image'],
                                     ENT_QUOTES,
                                     'UTF-8'
@@ -202,7 +202,7 @@ declare(strict_types=1);
 
 
                                 <img
-                                        src="/epko-mini-cms/public/uploads/gallery/<?= htmlspecialchars(
+                                        src="<?= APP_URL ?>/uploads/gallery/<?= htmlspecialchars(
                                             $image['image'],
                                             ENT_QUOTES,
                                             'UTF-8'

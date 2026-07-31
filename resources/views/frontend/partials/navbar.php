@@ -30,7 +30,7 @@ declare(strict_types=1);
            href="#top">
 
 
-            <img src="/epko-mini-cms/public/assets/images/logo.png"
+            <img src="<?= APP_URL ?>/assets/images/logo.png"
                  alt="ÉP-KŐ Kft."
                  height="50">
 

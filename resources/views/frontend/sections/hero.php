@@ -101,7 +101,7 @@ declare(strict_types=1);
                 <div class="hero-image-wrapper">
 
 
-                    <img src="/epko-mini-cms/public/assets/images/hero.jpg"
+                    <img src="<?= APP_URL ?>/assets/images/hero.jpg"
                          class="img-fluid rounded shadow"
                          alt="ÉP-KŐ természetes kőből készült építészeti munka">
 

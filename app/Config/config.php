@@ -4,64 +4,83 @@ declare(strict_types=1);
 
 /*
 |--------------------------------------------------------------------------
-| Application Constants
+| Application
 |--------------------------------------------------------------------------
 */
 
-define('APP_NAME', $_ENV['APP_NAME'] ?? 'EPKO Mini CMS');
+define(
+    'APP_NAME',
+    $_ENV['APP_NAME'] ?? 'EPKO Mini CMS'
+);
 
-define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
+define(
+    'APP_ENV',
+    $_ENV['APP_ENV'] ?? 'production'
+);
 
 define(
     'APP_DEBUG',
-    filter_var($_ENV['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN)
+    filter_var(
+        $_ENV['APP_DEBUG'] ?? false,
+        FILTER_VALIDATE_BOOLEAN
+    )
 );
 
-define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost');
+define(
+    'APP_URL',
+    $_ENV['APP_URL'] ?? ''
+);
+
+define(
+    'APP_TIMEZONE',
+    $_ENV['APP_TIMEZONE'] ?? 'Europe/Budapest'
+);
 
 
 /*
 |--------------------------------------------------------------------------
-| Upload Paths
+| Session
 |--------------------------------------------------------------------------
 */
 
-define('UPLOAD_PATH', dirname(__DIR__, 2) . '/public/uploads/');
+define(
+    'SESSION_NAME',
+    $_ENV['SESSION_NAME'] ?? 'EPKO_SESSION'
+);
 
-define('IMAGE_PATH', dirname(__DIR__, 2) . '/public/assets/images/');
+define(
+    'SESSION_LIFETIME',
+    (int) ($_ENV['SESSION_LIFETIME'] ?? 7200)
+);
 
 
 /*
 |--------------------------------------------------------------------------
-| Pagination
+| Database
 |--------------------------------------------------------------------------
 */
 
-define('ITEMS_PER_PAGE', 12);
+define(
+    'DB_HOST',
+    $_ENV['DB_HOST'] ?? 'localhost'
+);
 
+define(
+    'DB_PORT',
+    $_ENV['DB_PORT'] ?? '3306'
+);
 
-/*
-|--------------------------------------------------------------------------
-| Session Settings
-|--------------------------------------------------------------------------
-*/
+define(
+    'DB_DATABASE',
+    $_ENV['DB_DATABASE'] ?? ''
+);
 
-define('SESSION_NAME', 'epko_admin_session');
+define(
+    'DB_USERNAME',
+    $_ENV['DB_USERNAME'] ?? ''
+);
 
-define('SESSION_LIFETIME', 3600);
-
-
-/*
-|--------------------------------------------------------------------------
-| Timezone
-|--------------------------------------------------------------------------
-*/
-
-define('APP_TIMEZONE', 'Europe/Budapest');
-
-
-/*CMS verzió: */
-
-define('CMS_NAME', 'EPKO Mini CMS');
-define('CMS_VERSION', '1.0.0');
-define('CMS_DEVELOPER', 'Lukács Károly');
+define(
+    'DB_PASSWORD',
+    $_ENV['DB_PASSWORD'] ?? ''
+);

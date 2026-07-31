@@ -103,7 +103,7 @@ declare(strict_types=1);
     -->
 
     <link rel="stylesheet"
-          href="/epko-mini-cms/public/assets/css/frontend.css">
+          href="<?= APP_URL ?>/assets/css/frontend.css">
 
 
 
@@ -115,7 +115,7 @@ declare(strict_types=1);
 
     <link rel="icon"
           type="image/png"
-          href="/epko-mini-cms/public/assets/images/logo.png">
+          href="<?= APP_URL ?>/assets/images/logo.png">
 
 
 </head>

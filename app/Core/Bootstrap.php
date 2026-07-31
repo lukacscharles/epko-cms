@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Dotenv\Dotenv;
 
+
 /*
 |--------------------------------------------------------------------------
 | Composer Autoloader
@@ -41,7 +42,9 @@ require_once dirname(__DIR__) . '/Config/config.php';
 |--------------------------------------------------------------------------
 */
 
-date_default_timezone_set(APP_TIMEZONE);
+date_default_timezone_set(
+    APP_TIMEZONE
+);
 
 
 /*
@@ -60,6 +63,7 @@ if (APP_DEBUG) {
 } else {
 
     ini_set('display_errors', '0');
+
     error_reporting(0);
 
 }
@@ -71,20 +75,26 @@ if (APP_DEBUG) {
 |--------------------------------------------------------------------------
 */
 
-ini_set('session.cookie_httponly', '1');
-ini_set('session.use_only_cookies', '1');
-ini_set('session.use_strict_mode', '1');
+ini_set(
+    'session.cookie_httponly',
+    '1'
+);
+
+ini_set(
+    'session.use_only_cookies',
+    '1'
+);
+
+ini_set(
+    'session.use_strict_mode',
+    '1'
+);
+
 
 /*
 |--------------------------------------------------------------------------
-| SameSite cookie protection
+| SameSite Cookie Protection
 |--------------------------------------------------------------------------
-|
-| Possible values:
-| - Strict
-| - Lax
-| - None
-|
 */
 
 ini_set(
@@ -113,7 +123,9 @@ ini_set(
 
 if (session_status() === PHP_SESSION_NONE) {
 
-    session_name(SESSION_NAME);
+    session_name(
+        SESSION_NAME
+    );
 
     session_start();
 
@@ -122,19 +134,23 @@ if (session_status() === PHP_SESSION_NONE) {
 
 /*
 |--------------------------------------------------------------------------
-| Disable Browser Cache for Logged In Users
+| Disable Browser Cache For Logged In Users
 |--------------------------------------------------------------------------
-|
-| Prevents the browser from showing previously cached
-| admin pages after logout.
-|
 */
 
 if (isset($_SESSION['user_id'])) {
 
-    header('Cache-Control: no-store, no-cache, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
+    header(
+        'Cache-Control: no-store, no-cache, must-revalidate'
+    );
+
+    header(
+        'Pragma: no-cache'
+    );
+
+    header(
+        'Expires: 0'
+    );
 
 }
 
@@ -143,8 +159,6 @@ if (isset($_SESSION['user_id'])) {
 |--------------------------------------------------------------------------
 | Future Application Boot
 |--------------------------------------------------------------------------
-|
-| Possible future initializers:
 |
 | Auth::boot();
 | Csrf::boot();

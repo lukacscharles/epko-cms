@@ -277,7 +277,7 @@ declare(strict_types=1);
 -->
 
 <script
-        src="/epko-mini-cms/public/assets/js/frontend.js">
+        href="<?= APP_URL ?>/assets/js/frontend.js">
 </script>
 
 
