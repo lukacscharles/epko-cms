@@ -3,6 +3,20 @@
 > A custom-built PHP 8.2 Content Management System and multilingual one-page portfolio website developed for the Hungarian natural stone and architectural stonework company ÉPÜLET-KŐFARAGÓ Kft.
 
 ---
+##Highlights
+---
+
+
+• Custom authentication
+• CSRF protection
+• PDO
+• MVC-inspired architecture
+• Bootstrap 5 frontend
+• Multilingual-ready database
+• Gallery management
+• Category management
+• Production deployment
+---
 
 ## Project Overview
 
