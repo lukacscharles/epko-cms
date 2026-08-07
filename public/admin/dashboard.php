@@ -26,16 +26,16 @@ $pageTitle = 'Dashboard';
 
 /*
 |--------------------------------------------------------------------------
-| Future Statistics
+| Statistics
 |--------------------------------------------------------------------------
-|
-| These values will later come from the database.
-|
 */
 
 $totalImages = 0;
 $totalCategories = 0;
 $unreadMessages = 0;
+
+$userModel = new User();
+$totalUsers = $userModel->count();
 
 $user = Auth::user();
 
@@ -55,19 +55,43 @@ require_once 'partials/sidebar.php';
 
     <!-- Page Heading -->
 
-    <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h1 class="h3 mb-1">
+        <div>
 
-            Dashboard
+            <h1 class="h3 mb-1">
 
-        </h1>
+                Dashboard
 
-        <p class="text-muted">
+            </h1>
 
-            Üdvözöllek az EPKO Mini CMS adminisztrációs felületén!
+            <p class="text-muted mb-0">
 
-        </p>
+                Üdvözöllek az EPKO Mini CMS adminisztrációs felületén!
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="user-create.php" class="btn btn-primary me-2">
+
+                <i class="bi bi-person-plus"></i>
+
+                Új felhasználó hozzáadása
+
+            </a>
+
+            <a href="users.php" class="btn btn-outline-secondary">
+
+                <i class="bi bi-people"></i>
+
+                Felhasználók
+
+            </a>
+
+        </div>
 
     </div>
 
@@ -76,7 +100,7 @@ require_once 'partials/sidebar.php';
 
     <div class="row g-4">
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm">
 
@@ -101,7 +125,7 @@ require_once 'partials/sidebar.php';
         </div>
 
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm">
 
@@ -126,7 +150,7 @@ require_once 'partials/sidebar.php';
         </div>
 
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm">
 
@@ -141,6 +165,31 @@ require_once 'partials/sidebar.php';
                     <h2>
 
                         <?= $unreadMessages; ?>
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h5>
+
+                        Felhasználók
+
+                    </h5>
+
+                    <h2>
+
+                        <?= $totalUsers; ?>
 
                     </h2>
 

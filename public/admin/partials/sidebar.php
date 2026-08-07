@@ -125,6 +125,30 @@ declare(strict_types=1);
 
             <li>
 
+                <a href="users.php">
+
+                    <i class="bi bi-people"></i>
+
+                    Felhasználók
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="user-create.php">
+
+                    <i class="bi bi-person-plus"></i>
+
+                    Új felhasználó
+
+                </a>
+
+            </li>
+
+            <li>
+
                 <a href="settings.php">
 
                     <i class="bi bi-gear"></i>

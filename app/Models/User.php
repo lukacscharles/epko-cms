@@ -156,4 +156,39 @@ class User
             'id' => $id
         ]);
     }
+
+
+    /**
+     * Find user by name
+     */
+    public function findByName(string $name): ?array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT *
+             FROM users
+             WHERE name = :name
+             LIMIT 1"
+        );
+
+        $stmt->execute([
+            'name' => $name
+        ]);
+
+        $user = $stmt->fetch();
+
+        return $user ?: null;
+    }
+
+
+    /**
+     * Count total users
+     */
+    public function count(): int
+    {
+        $stmt = $this->db->query(
+            "SELECT COUNT(*) FROM users"
+        );
+
+        return (int)$stmt->fetchColumn();
+    }
 }
